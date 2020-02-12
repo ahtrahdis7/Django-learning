@@ -11,8 +11,14 @@ from django.views.generic import (TemplateView,ListView,
                                     )
 # Create your views here.
 
+# from django.contrib.auth.mixins import LoginRequiredMixin
+
+# class MyView(LoginRequiredMixin, View):
+#     login_url = '/registration/login.html'
+#     redirect_field_name = '/'
+
 class AboutView(TemplateView):
-    template_name = 'about.html'
+    template_name = 'blog/about.html'
 
 class PostListView(ListView):
     model = Post
@@ -50,7 +56,7 @@ class DraftListView(LoginRequiredMixin,ListView):
     model = Post
 
     def get_queryset(self):
-        return Post.objects.filter(published_date__isnull=True).order_by('created_date')
+        return Post.objects.filter(published_date__isnull=True).order_by('create_date')
 
 
 #########################################################################
