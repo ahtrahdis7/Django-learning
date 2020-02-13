@@ -5,6 +5,7 @@ from django.utils import timezone
 # Create your models here.
 from django.urls import reverse
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 class Post(models.Model):
     author = models.ForeignKey('auth.User',on_delete='DO_NOTHING')
@@ -14,7 +15,9 @@ class Post(models.Model):
     published_date = models.DateTimeField(blank=True, null=True)
 
     def publish(self):
+        print("Hello There")
         self.published_date = timezone.now()
+        print("Hello There")
         self.save()
 
     def approve_comments(self):

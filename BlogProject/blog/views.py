@@ -4,6 +4,7 @@ from blog.models import Post,Comment
 from django.contrib.auth.decorators import login_required
 from blog.forms import PostForm,CommentForm
 from django.urls import reverse_lazy
+from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (TemplateView,ListView,
                                     DetailView,CreateView,
@@ -11,11 +12,6 @@ from django.views.generic import (TemplateView,ListView,
                                     )
 # Create your views here.
 
-# from django.contrib.auth.mixins import LoginRequiredMixin
-
-# class MyView(LoginRequiredMixin, View):
-#     login_url = '/registration/login.html'
-#     redirect_field_name = '/'
 
 class AboutView(TemplateView):
     template_name = 'blog/about.html'
@@ -48,15 +44,17 @@ class PostUpdateView(LoginRequiredMixin,UpdateView):
 
 class PostDeleteView(LoginRequiredMixin,DeleteView):
     model = Post
-    success_url = ('post_list')
+    success_url = 'post_list'
+    # redirect_field_name = 'post_draft'
 
 class DraftListView(LoginRequiredMixin,ListView):
-    login_url = '/login/'
-    redirect_field_name = 'blog/post_list.html'
     model = Post
-
+    template_name = 'blog/post_draft.html'
+    login_url = '/login/'
+    redirect_field_name = 'post_list'
+    
     def get_queryset(self):
-        return Post.objects.filter(published_date__isnull=True).order_by('create_date')
+        return Post.objects.filter(published_date__isnull=True).order_by('-create_date')
 
 
 #########################################################################
@@ -64,14 +62,14 @@ class DraftListView(LoginRequiredMixin,ListView):
 @login_required
 def post_publish(request,pk):
     post = get_list_or_404(Post,pk=pk)
-    post.publish
+    post[0].publish()
     return redirect('post_detail', pk=pk)
 
 
 @login_required
 def add_comment_to_post(request,pk):
-    post = get_list_or_404(Post,pk=pk)
-
+    pos = get_list_or_404(Post,pk=pk)
+    post = pos[0]
 
     if request.method == 'POST':
         form = CommentForm(request,POST)
