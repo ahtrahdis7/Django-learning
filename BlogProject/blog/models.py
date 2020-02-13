@@ -15,9 +15,7 @@ class Post(models.Model):
     published_date = models.DateTimeField(blank=True, null=True)
 
     def publish(self):
-        print("Hello There")
         self.published_date = timezone.now()
-        print("Hello There")
         self.save()
 
     def approve_comments(self):
@@ -46,4 +44,4 @@ class Comment(models.Model):
 
 
     def __str__(self):
-        return self.text
+        return self.author
